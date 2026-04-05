@@ -1,0 +1,67 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# ML artifacts
+*.pkl
+*.pt
+*.pth
+*.onnx
+*.gguf
+src/*/models/*.pkl
+src/*/models/*.pt
+src/*/results/*.png
+src/*/results/*.json
+
+# Vector DB (auto-rebuilt)
+src/rag/.chroma_db/
+*.sqlite3
+
+# Ollama (models stored elsewhere)
+*.gguf
+*.bin
+
+# Environment variables
+.env
+.env.local
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Temp
+tmp/
+temp/
+*.tmp

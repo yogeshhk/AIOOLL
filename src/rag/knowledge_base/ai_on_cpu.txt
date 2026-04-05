@@ -1,0 +1,53 @@
+ARTIFICIAL INTELLIGENCE ON CPU-ONLY HARDWARE
+============================================
+
+Chapter 1: Overview
+--------------------
+Running artificial intelligence workloads on CPU-only hardware has become increasingly viable thanks to model quantization techniques and optimized runtimes. Modern quantized models in GGUF format can run effectively on Intel Core i3 processors with 8GB of RAM. The key insight is that inference — using a trained model to generate responses — requires significantly less compute than training.
+
+Chapter 2: Quantization Techniques
+------------------------------------
+Quantization reduces the precision of model weights from 32-bit or 16-bit floating point to 4-bit or 8-bit integers. This dramatically reduces memory requirements and speeds up CPU inference. The most common formats are:
+
+GGUF (GPT-Generated Unified Format): The standard format for llama.cpp-based inference. Supports Q4_K_M quantization which offers the best tradeoff between quality and speed on CPU hardware.
+
+ONNX (Open Neural Network Exchange): A cross-platform format supported by Intel OpenVINO. Particularly good for transformer models on Intel CPUs with AVX2 support.
+
+Q4_K_M quantization typically reduces a 7B parameter model from 13GB (FP16) to approximately 4.5GB, making it feasible to run on 8GB RAM systems.
+
+Chapter 3: Recommended Models for CPU
+---------------------------------------
+The following models are recommended for CPU-only inference:
+
+Gemma 2 2B: Google's smallest capable model. Achieves approximately 8 tokens per second on Intel i3 8th generation. Excellent for chat, summarization, and RAG.
+
+Qwen 2 1.5B: Alibaba's multilingual model. Supports 29 languages natively. Runs at approximately 12 tokens per second on i3 CPUs. Best for multilingual applications.
+
+TinyLlama 1.1B: Extremely small model for resource-constrained environments. 15+ tokens per second on older hardware. Suitable for simple classification and agent tool use.
+
+Phi-3 Mini 3.8B: Microsoft's surprisingly capable small model. Runs at about 5 tokens per second. Best reasoning quality among sub-4B models.
+
+nomic-embed-text: Embedding model for RAG and semantic search. 270MB, generates embeddings in under 50ms per query. Essential for local RAG pipelines.
+
+Chapter 4: Ollama Runtime
+---------------------------
+Ollama is the recommended runtime for local LLM inference. It provides:
+- Simple REST API compatible with OpenAI clients
+- Automatic model management and caching
+- Support for multiple concurrent model loading
+- Built-in quantization selection
+- macOS, Linux, and Windows support
+
+Installation: curl -fsSL https://ollama.ai/install.sh | sh
+Starting the server: ollama serve
+Running a model: ollama run gemma2:2b
+
+Chapter 5: Performance Optimization
+--------------------------------------
+For optimal CPU inference performance:
+
+1. CPU Governor: Set to performance mode using cpupower or directly writing to sysfs
+2. RAM: Ensure adequate free memory before starting inference; close browsers
+3. Thread Count: Set OMP_NUM_THREADS to the number of physical cores (not hyperthreads)
+4. NUMA: On multi-socket systems, use numactl to bind to a single socket
+5. Thermal Throttling: Monitor CPU temperature; ensure laptop cooling is adequate

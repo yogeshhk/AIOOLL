@@ -1,0 +1,41 @@
+[tool.pytest.ini_options]
+testpaths = ["src"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short --timeout=120"
+markers = [
+    "slow: tests that take > 30 seconds",
+    "ollama: tests requiring Ollama to be running",
+    "gpu: tests requiring GPU (skip on CPU-only)",
+]
+
+[tool.flake8]
+max-line-length = 100
+exclude = [".git", "__pycache__", "venv", "build", "dist"]
+ignore = ["E203", "W503"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310", "py311"]
+
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "prajna-ai"
+version = "0.1.0"
+description = "Full-stack AI on a CPU-only Linux laptop — offline, local, and free"
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.10"
+keywords = ["AI", "machine-learning", "CPU", "offline", "ollama", "RAG", "langchain", "langgraph"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
