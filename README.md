@@ -17,9 +17,9 @@
 **AIOOLL** = **A**I **O**n **O**ld **L**inux **L**aptop
 
 That dusty i3 machine under your desk? It's a complete AI development environment.
-This repository proves it — with working code, tests, Streamlit UIs, and real benchmark numbers.
+This repository proves it, with working code, tests, Streamlit UIs, and real benchmark numbers.
 
-The double-O in AIOOLL isn't just letters — it's a pair of eyes, wide open at what old hardware can do.
+The double-O in AIOOLL isn't just letters, it's a pair of eyes, wide open at what old hardware can do.
 
 ---
 
@@ -29,7 +29,7 @@ The double-O in AIOOLL isn't just letters — it's a pair of eyes, wide open at 
 AIOOLL/
 ├── src/
 │   ├── ml/              # Classical Machine Learning (scikit-learn)
-│   ├── dl/              # Deep Learning (PyTorch — CPU optimized)
+│   ├── dl/              # Deep Learning (PyTorch, CPU optimized)
 │   ├── rag/             # Retrieval-Augmented Generation (LangChain)
 │   ├── agents/          # AI Agents & Workflows (LangGraph)
 │   ├── cv/              # Computer Vision Lite (OpenCV)
@@ -102,40 +102,40 @@ make ui-rag
 
 ### 🔬 1. Classical Machine Learning (`src/ml/`)
 Academic-grade scikit-learn implementations.
-- **Spam/Sentiment Classifier** — Naive Bayes, Logistic Regression, SVM with TF-IDF
-- **Predictive Modeling** — House price regression, cross-validation, SHAP explainability
-- **Streamlit UI** — Interactive model comparison dashboard
+- **Spam/Sentiment Classifier**: Naive Bayes, Logistic Regression, SVM with TF-IDF
+- **Predictive Modeling**: House price regression, cross-validation, SHAP explainability
+- **Streamlit UI**: Interactive model comparison dashboard
 
 ### 🧠 2. Deep Learning (`src/dl/`)
 PyTorch models optimized for CPU inference.
-- **Text Classification** — Bidirectional LSTM trained from scratch
-- **Tabular Learning** — MLP with batch normalization and Huber loss
-- **Streamlit UI** — Training visualizer with live loss curves
+- **Text Classification**: Bidirectional LSTM trained from scratch
+- **Tabular Learning**: MLP with batch normalization and Huber loss
+- **Streamlit UI**: Training visualizer with live loss curves
 
 ### 📚 3. RAG Pipeline (`src/rag/`)
 LangChain + local embeddings + Ollama LLMs.
-- **Document Q&A** — PDF/TXT ingestion with ChromaDB vector store
-- **Semantic Search** — nomic-embed-text embeddings (CPU)
-- **Streamlit UI** — Chat interface with source highlighting
+- **Document Q&A**: PDF/TXT ingestion with ChromaDB vector store
+- **Semantic Search**: nomic-embed-text embeddings (CPU)
+- **Streamlit UI**: Chat interface with source highlighting
 
 ### 🤖 4. AI Agents (`src/agents/`)
-LangGraph multi-agent workflows — no OpenAI required.
-- **Research Agent** — Plan → Search local KB → Synthesize (linear graph)
-- **Code Review Agent** — Conditional routing by severity (branching graph)
-- **Streamlit UI** — Agent thought-process visualizer
+LangGraph multi-agent workflows: no OpenAI required.
+- **Research Agent**: Plan → Search local KB → Synthesize (linear graph)
+- **Code Review Agent**: Conditional routing by severity (branching graph)
+- **Streamlit UI**: Agent thought-process visualizer
 
 ### 👁️ 5. Computer Vision (`src/cv/`)
-OpenCV classical CV — zero deep learning required.
-- **Face Detection** — Haar Cascade real-time detection
-- **Motion Detection** — MOG2 background subtraction
-- **Streamlit UI** — Live webcam feed with annotations
+OpenCV classical CV: zero deep learning required.
+- **Face Detection**: Haar Cascade real-time detection
+- **Motion Detection**: MOG2 background subtraction
+- **Streamlit UI**: Live webcam feed with annotations
 
 ### 🦙 6. Local LLM Inference (`src/llm_inference/`)
 Direct Ollama integration and benchmarking.
-- **Model Benchmarking** — Tokens/sec, latency leaderboard across models
-- **Chat Interface** — Multi-turn conversation with history
-- **Prompt Patterns** — Zero-shot, few-shot, chain-of-thought, structured output
-- **Streamlit UI** — Model comparison dashboard
+- **Model Benchmarking**: Tokens/sec, latency leaderboard across models
+- **Chat Interface**: Multi-turn conversation with history
+- **Prompt Patterns**: Zero-shot, few-shot, chain-of-thought, structured output
+- **Streamlit UI**: Model comparison dashboard
 
 ---
 
@@ -214,7 +214,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full checklist.
 
 ## 📜 License
 
-MIT — see [LICENSE](LICENSE)
+MIT: see [LICENSE](LICENSE)
 
 ---
 
