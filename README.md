@@ -38,6 +38,8 @@ AIOOLL/
 ├── docs/                # Architecture diagrams, guides
 ├── scripts/             # Setup, model download, env bootstrap
 └── tests/               # Integration tests
+    ├── conftest.py          # Shared fixtures
+    └── test_integration.py  # Structure, imports, offline-readiness checks
 ```
 
 ---
@@ -53,12 +55,16 @@ AIOOLL/
 | Storage   | 20 GB free (SSD!) | 50 GB SSD |
 | OS        | Xubuntu 22.04 LTS | Lubuntu / Xubuntu |
 | Python    | 3.10    | 3.11+ |
+| Conda     | Miniconda | Miniconda / Mambaforge |
 
 ### 2. One-Line Bootstrap
 
 ```bash
 git clone https://github.com/yogeshhk/AIOOLL.git
 cd AIOOLL
+conda create -n aiooll python=3.10 -y
+conda activate aiooll
+pip install -r requirements.txt
 bash scripts/setup.sh
 ```
 
@@ -77,7 +83,7 @@ ollama pull nomic-embed-text    # for RAG embeddings
 ### 4. Run Any Module
 
 ```bash
-source venv/bin/activate
+conda activate aiooll
 
 # Driver (headless)
 cd src/ml && python driver.py
