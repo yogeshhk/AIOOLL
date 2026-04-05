@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# PrajnaAI — Bootstrap Setup Script
+# AIOOLL  — Bootstrap Setup Script
 # Works fully offline after initial package download
 set -euo pipefail
 
@@ -12,13 +12,13 @@ NC='\033[0m'
 banner() {
   echo -e "${CYAN}"
   echo "  ╔═══════════════════════════════════════╗"
-  echo "  ║     🕉️  PrajnaAI — Setup Script       ║"
+  echo "  ║     🕉️  AIOOLL  — Setup Script       ║"
   echo "  ║   AI on CPU. Wisdom needs no GPU.     ║"
   echo "  ╚═══════════════════════════════════════╝"
   echo -e "${NC}"
 }
 
-check_python() {
+check_conda() {
   echo -e "${CYAN}[1/6] Checking Python version...${NC}"
   if ! command -v python3 &>/dev/null; then
     echo -e "${RED}Python3 not found. Install with: sudo apt install python3${NC}"
@@ -34,7 +34,7 @@ check_python() {
   fi
 }
 
-create_venv() {
+check_conda_env() {
   echo -e "${CYAN}[2/6] Creating virtual environment...${NC}"
   if [ ! -d "venv" ]; then
     python3 -m venv venv
@@ -105,8 +105,8 @@ check_ollama() {
 
 main() {
   banner
-  check_python
-  create_venv
+  check_conda
+  check_conda_env
   install_deps
   download_nltk_data
   download_cv_models
@@ -114,11 +114,11 @@ main() {
 
   echo ""
   echo -e "${GREEN}════════════════════════════════════════${NC}"
-  echo -e "${GREEN}  ✅ PrajnaAI setup complete!           ${NC}"
+  echo -e "${GREEN}  ✅ AIOOLL  setup complete!           ${NC}"
   echo -e "${GREEN}════════════════════════════════════════${NC}"
   echo ""
   echo "Next steps:"
-  echo "  source venv/bin/activate"
+  echo "  source conda activate aiooll"
   echo "  bash scripts/pull_models.sh"
   echo "  cd src/ml && python driver.py"
   echo "  cd src/ml && streamlit run ui/app.py"

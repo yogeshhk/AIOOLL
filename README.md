@@ -63,6 +63,7 @@ AIOOLL/
 git clone https://github.com/yogeshhk/AIOOLL.git
 cd AIOOLL
 conda create -n aiooll python=3.10 -y
+source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate aiooll
 pip install -r requirements.txt
 bash scripts/setup.sh
