@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# AIOOLL  — Bootstrap Setup Script
+# AIOOLL — Bootstrap Setup Script
 # Works fully offline after initial package download
 set -euo pipefail
 
@@ -12,37 +12,34 @@ NC='\033[0m'
 banner() {
   echo -e "${CYAN}"
   echo "  ╔═══════════════════════════════════════╗"
-  echo "  ║     🕉️  AIOOLL  — Setup Script       ║"
-  echo "  ║   AI on CPU. Wisdom needs no GPU.     ║"
+  echo "  ║      👀 AIOOLL — Setup Script         ║"
+  echo "  ║   AI on CPU. Old laptop. No GPU.      ║"
   echo "  ╚═══════════════════════════════════════╝"
   echo -e "${NC}"
 }
 
 check_conda() {
-  echo -e "${CYAN}[1/6] Checking Python version...${NC}"
-  if ! command -v python3 &>/dev/null; then
-    echo -e "${RED}Python3 not found. Install with: sudo apt install python3${NC}"
+  echo -e "${CYAN}[1/6] Checking Conda...${NC}"
+  if ! command -v conda &>/dev/null; then
+    echo -e "${RED}Conda not found. Install Miniconda from:${NC}"
+    echo "    https://docs.conda.io/en/latest/miniconda.html"
     exit 1
   fi
-  PYVER=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
-  echo -e "${GREEN}✓ Python $PYVER found${NC}"
-  if python3 -c 'import sys; exit(0 if sys.version_info >= (3,10) else 1)'; then
-    echo -e "${GREEN}✓ Version OK${NC}"
-  else
-    echo -e "${RED}Python 3.10+ required. Current: $PYVER${NC}"
-    exit 1
-  fi
+  echo -e "${GREEN}✓ Conda found: $(conda --version)${NC}"
 }
 
-check_conda_env() {
-  echo -e "${CYAN}[2/6] Creating virtual environment...${NC}"
-  if [ ! -d "venv" ]; then
-    python3 -m venv venv
-    echo -e "${GREEN}✓ venv created${NC}"
+create_conda_env() {
+  echo -e "${CYAN}[2/6] Creating conda environment 'aiooll'...${NC}"
+  if conda env list | grep -q "^aiooll "; then
+    echo -e "${YELLOW}⚠ Environment 'aiooll' already exists, skipping create${NC}"
   else
-    echo -e "${YELLOW}⚠ venv already exists, skipping${NC}"
+    conda create -n aiooll python=3.10 -y
+    echo -e "${GREEN}✓ Conda env 'aiooll' created${NC}"
   fi
-  source venv/bin/activate
+  # shellcheck disable=SC1091
+  source "$(conda info --base)/etc/profile.d/conda.sh"
+  conda activate aiooll
+  echo -e "${GREEN}✓ Conda env 'aiooll' activated${NC}"
 }
 
 install_deps() {
@@ -106,7 +103,7 @@ check_ollama() {
 main() {
   banner
   check_conda
-  check_conda_env
+  create_conda_env
   install_deps
   download_nltk_data
   download_cv_models
@@ -114,11 +111,11 @@ main() {
 
   echo ""
   echo -e "${GREEN}════════════════════════════════════════${NC}"
-  echo -e "${GREEN}  ✅ AIOOLL  setup complete!           ${NC}"
+  echo -e "${GREEN}  ✅ AIOOLL setup complete!             ${NC}"
   echo -e "${GREEN}════════════════════════════════════════${NC}"
   echo ""
   echo "Next steps:"
-  echo "  source conda activate aiooll"
+  echo "  conda activate aiooll"
   echo "  bash scripts/pull_models.sh"
   echo "  cd src/ml && python driver.py"
   echo "  cd src/ml && streamlit run ui/app.py"
