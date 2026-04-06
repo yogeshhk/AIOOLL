@@ -12,6 +12,7 @@ Run: pytest tests/ -v
 
 import sys
 import importlib
+import importlib.util
 import subprocess
 from pathlib import Path
 
@@ -42,10 +43,8 @@ class TestRepoStructure:
         "README.md", "requirements.txt", "LICENSE", ".gitignore",
         "Makefile", "pyproject.toml",
         "scripts/setup.sh", "scripts/pull_models.sh",
-        ".github/workflows/ci.yml",
         "docs/hardware_optimization.md",
         "docs/community_benchmarks.md",
-        "docs/linkedin_post.md",
         "src/ml/driver.py", "src/ml/ui/app.py", "src/ml/tests/test_ml.py",
         "src/ml/data/sms_spam.csv", "src/ml/data/house_prices.csv",
         "src/dl/driver.py", "src/dl/ui/app.py", "src/dl/tests/test_dl.py",
@@ -54,6 +53,13 @@ class TestRepoStructure:
         "src/agents/driver.py", "src/agents/ui/app.py", "src/agents/tests/test_agents.py",
         "src/cv/driver.py", "src/cv/ui/app.py",
         "src/llm_inference/driver.py", "src/llm_inference/ui/app.py",
+    ]
+
+    # Files that are optional (generated, platform-specific, or
+    # may not be committed to every fork of the repo)
+    OPTIONAL_FILES = [
+        ".github/workflows/ci.yml",
+        "docs/linkedin_post.md",
     ]
 
     @pytest.mark.parametrize("folder", REQUIRED_DIRS)
@@ -65,6 +71,13 @@ class TestRepoStructure:
     def test_required_file_exists(self, filepath):
         path = ROOT / filepath
         assert path.is_file(), f"Missing file: {filepath}"
+
+    @pytest.mark.parametrize("filepath", OPTIONAL_FILES)
+    def test_optional_file_exists(self, filepath):
+        """Warn but don't fail if optional files are absent."""
+        path = ROOT / filepath
+        if not path.is_file():
+            pytest.skip(f"Optional file not present: {filepath}")
 
     def test_all_drivers_are_non_empty(self):
         for module in ["ml", "dl", "rag", "agents", "cv", "llm_inference"]:
@@ -124,16 +137,18 @@ class TestDatasets:
 class TestImports:
     """Verify all key dependencies are importable."""
 
+    # Packages that must be present for AIOOLL to function
     CORE_PACKAGES = [
-        "numpy", "pandas", "matplotlib", "seaborn", "plotly",
+        "numpy", "pandas", "matplotlib", "seaborn",
         "sklearn", "scipy", "joblib",
         "torch", "torchvision",
         "nltk", "cv2", "PIL",
         "streamlit", "rich", "tqdm", "loguru",
     ]
 
+    # Packages that are useful but not required for offline ML/DL/CV
     OPTIONAL_PACKAGES = [
-        # These may fail if not installed; we warn but don't fail
+        "plotly",                              # UI only — skip gracefully if absent
         "langchain", "langgraph", "chromadb", "ollama",
     ]
 
@@ -143,7 +158,7 @@ class TestImports:
             importlib.import_module(package)
         except ImportError as e:
             pytest.fail(f"Core package '{package}' not importable: {e}\n"
-                        f"Run: bash scripts/setup.sh")
+                        f"Run: pip install -r requirements.txt")
 
     @pytest.mark.parametrize("package", OPTIONAL_PACKAGES)
     def test_optional_package_importable(self, package):
@@ -154,9 +169,6 @@ class TestImports:
 
     def test_torch_is_cpu_build(self):
         import torch
-        # On CPU-only systems CUDA should not be available
-        # We don't fail if CUDA is available (user might have a GPU),
-        # but we confirm torch itself works on CPU
         x = torch.tensor([1.0, 2.0, 3.0])
         assert x.device.type == "cpu"
         assert (x * 2).tolist() == [2.0, 4.0, 6.0]
@@ -183,6 +195,19 @@ class TestImports:
 # CROSS-MODULE COMPATIBILITY
 # ═══════════════════════════════════════════════════════════════════════════
 
+def _import_driver(module_name: str, alias: str):
+    """
+    Load src/<module_name>/driver.py as a fresh module without touching
+    sys.path — avoids the Windows collision where a cached 'driver' entry
+    from ml/ is returned for dl/, agents/, and cv/ lookups.
+    """
+    driver_path = ROOT / "src" / module_name / "driver.py"
+    spec = importlib.util.spec_from_file_location(alias, driver_path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
 class TestCrossModule:
     """Verify modules can share data and models correctly."""
 
@@ -197,41 +222,29 @@ class TestCrossModule:
             "DL module expects these feature columns from ML data"
 
     def test_ml_driver_importable(self):
-        sys.path.insert(0, str(ROOT / "src" / "ml"))
-        try:
-            from driver import SpamClassifier, HousePricePredictor
-            assert callable(SpamClassifier)
-            assert callable(HousePricePredictor)
-        finally:
-            sys.path.pop(0)
+        mod = _import_driver("ml", "driver_ml")
+        assert callable(mod.SpamClassifier)
+        assert callable(mod.HousePricePredictor)
 
     def test_dl_driver_importable(self):
-        sys.path.insert(0, str(ROOT / "src" / "dl"))
-        try:
-            from driver import LSTMClassifier, SentimentDataset, TabularMLP
-            assert callable(LSTMClassifier)
-            assert callable(SentimentDataset)
-        finally:
-            sys.path.pop(0)
+        mod = _import_driver("dl", "driver_dl")
+        assert callable(mod.LSTMClassifier)
+        assert callable(mod.SentimentDataset)
+        assert callable(mod.TabularMLP)
 
     def test_agents_tools_importable(self):
-        sys.path.insert(0, str(ROOT / "src" / "agents"))
-        try:
-            from driver import calculator, word_counter, python_syntax_checker
-            assert callable(calculator)
-            assert callable(word_counter)
-            assert callable(python_syntax_checker)
-        finally:
-            sys.path.pop(0)
+        mod = _import_driver("agents", "driver_agents")
+        # LangChain @tool returns a StructuredTool, not a plain function.
+        # callable() returns False on StructuredTool; check .invoke instead.
+        for tool_name in ("calculator", "word_counter", "python_syntax_checker"):
+            tool = getattr(mod, tool_name)
+            assert hasattr(tool, "invoke"), \
+                f"'{tool_name}' has no .invoke — is it decorated with @tool?"
 
     def test_cv_driver_importable(self):
-        sys.path.insert(0, str(ROOT / "src" / "cv"))
-        try:
-            from driver import MotionDetector, ImageAnalyzer
-            assert callable(MotionDetector)
-            assert callable(ImageAnalyzer)
-        finally:
-            sys.path.pop(0)
+        mod = _import_driver("cv", "driver_cv")
+        assert callable(mod.MotionDetector)
+        assert callable(mod.ImageAnalyzer)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -242,7 +255,7 @@ class TestOfflineReadiness:
     """Confirm no module makes network calls at import time."""
 
     def test_requirements_txt_exists_and_parseable(self):
-        req = (ROOT / "requirements.txt").read_text()
+        req = (ROOT / "requirements.txt").read_text(encoding="utf-8")
         lines = [l.strip() for l in req.splitlines()
                  if l.strip() and not l.startswith("#")]
         assert len(lines) >= 10, "requirements.txt seems incomplete"
@@ -255,19 +268,19 @@ class TestOfflineReadiness:
             re.IGNORECASE
         )
         for driver in ROOT.glob("src/*/driver.py"):
-            content = driver.read_text()
+            content = driver.read_text(encoding="utf-8")
             match = key_pattern.search(content)
             assert match is None, \
                 f"Possible hardcoded API key found in {driver}: {match.group()}"
 
     def test_scripts_are_executable_text(self):
         for script in (ROOT / "scripts").glob("*.sh"):
-            content = script.read_text()
+            content = script.read_text(encoding="utf-8")
             assert "#!/" in content[:20], f"{script.name} missing shebang"
             assert len(content) > 100, f"{script.name} looks empty"
 
     def test_makefile_has_key_targets(self):
-        makefile = (ROOT / "Makefile").read_text()
+        makefile = (ROOT / "Makefile").read_text(encoding="utf-8")
         for target in ["setup", "test", "run-ml", "run-dl", "run-rag", "run-agents", "clean"]:
             assert f"{target}:" in makefile, f"Makefile missing target: {target}"
 

@@ -1,0 +1,71 @@
+name: PrajnaAI CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      - name: Install CPU-only PyTorch
+        run: |
+          pip install torch torchvision torchaudio \
+            --index-url https://download.pytorch.org/whl/cpu --quiet
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Download NLTK data
+        run: |
+          python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt'); nltk.download('wordnet')"
+
+      - name: Run ML tests (no Ollama needed)
+        run: |
+          pytest src/ml/tests/ -v --timeout=120 -m "not ollama"
+
+      - name: Run DL tests (CPU PyTorch)
+        run: |
+          pytest src/dl/tests/ -v --timeout=180 -m "not ollama"
+
+      - name: Run agent tool tests (no Ollama needed)
+        run: |
+          pytest src/agents/tests/ -v --timeout=60 -m "not ollama"
+
+      - name: Lint
+        run: |
+          pip install flake8
+          flake8 src/ --max-line-length=100 --ignore=E203,W503 --exclude=__pycache__
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check all driver.py files exist
+        run: |
+          for module in ml dl rag agents cv llm_inference; do
+            test -f "src/$module/driver.py" || (echo "Missing src/$module/driver.py" && exit 1)
+          done
+          echo "All driver files present ✓"
+      - name: Check all UI files exist
+        run: |
+          for module in ml dl rag agents llm_inference; do
+            test -f "src/$module/ui/app.py" || (echo "Missing src/$module/ui/app.py" && exit 1)
+          done
+          echo "All UI files present ✓"

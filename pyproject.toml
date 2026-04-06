@@ -9,6 +9,9 @@ markers = [
     "ollama: tests requiring Ollama to be running",
     "gpu: tests requiring GPU (skip on CPU-only)",
 ]
+filterwarnings = [
+    "ignore::DeprecationWarning:jupyter_client",
+]
 
 [tool.flake8]
 max-line-length = 100
