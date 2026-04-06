@@ -73,9 +73,9 @@ bash scripts/setup.sh
 
 ```bash
 # Install Ollama
-bash scripts/install_ollama.sh
+bash scripts/pull models.sh
 
-# Pull quantized CPU-friendly models
+# Else Pull quantized CPU-friendly models
 ollama pull gemma2:2b
 ollama pull qwen2:1.5b
 ollama pull nomic-embed-text    # for RAG embeddings

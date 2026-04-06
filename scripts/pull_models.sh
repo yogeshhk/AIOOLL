@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# PrajnaAI — Pull quantized CPU-friendly models via Ollama
+# AIOOLL — Pull quantized CPU-friendly models via Ollama
 set -euo pipefail
 
 CYAN='\033[0;36m'

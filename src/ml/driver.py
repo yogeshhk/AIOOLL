@@ -90,7 +90,7 @@ class SpamClassifier:
 
     def load_data(self):
         logger.info("Loading SMS spam dataset...")
-        df = pd.read_csv(self.data_path)
+        df = pd.read_csv(self.data_path, encoding="utf-8", quotechar='"')
         df["label_num"] = (df["label"] == "spam").astype(int)
         logger.info(f"Dataset: {len(df)} samples | Spam: {df['label_num'].sum()} | Ham: {(df['label_num']==0).sum()}")
         return df
