@@ -8,7 +8,7 @@
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://python.org)
 [![Ollama](https://img.shields.io/badge/LLM-Ollama-green.svg)](https://ollama.ai)
 [![Offline](https://img.shields.io/badge/Internet-Not%20Required-red.svg)](#)
-[![Stars](https://img.shields.io/github/stars/yourusername/AIOOLL?style=social)](#)
+[![Stars](https://img.shields.io/github/stars/yogeshhk/AIOOLL?style=social)](#)
 
 ---
 
