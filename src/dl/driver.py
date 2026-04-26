@@ -103,7 +103,7 @@ class LSTMClassifier(nn.Module):
     def __init__(self, vocab_size: int, embed_dim: int = 32, hidden_dim: int = 64, dropout: float = 0.3):
         super().__init__()
         self.embedding = nn.Embedding(vocab_size, embed_dim, padding_idx=0)
-        self.lstm = nn.LSTM(embed_dim, hidden_dim, batch_first=True, bidirectional=True, dropout=dropout)
+        self.lstm = nn.LSTM(embed_dim, hidden_dim, num_layers=2, batch_first=True, bidirectional=True, dropout=dropout)
         self.dropout = nn.Dropout(dropout)
         self.classifier = nn.Sequential(
             nn.Linear(hidden_dim * 2, 32),

@@ -147,11 +147,11 @@ if "📧 Spam Detector" in module:
                 badge = f'<span class="spam-badge">🚨 SPAM</span>' if pred == "SPAM" else f'<span class="ham-badge">✅ HAM</span>'
                 st.markdown(f"**Prediction:** {badge}", unsafe_allow_html=True)
 
-                # Confidence gauge
+                # Confidence gauge — confidence is already [0, 1] from driver
                 score = result["confidence"]
                 fig = go.Figure(go.Indicator(
                     mode="gauge+number",
-                    value=min(max(score * 10 + 50, 0), 100),  # normalize
+                    value=round(score * 100, 1),
                     title={"text": "Spam Probability", "font": {"color": "#c8d6e5"}},
                     gauge={
                         "axis": {"range": [0, 100]},

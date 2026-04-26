@@ -23,7 +23,7 @@ from loguru import logger
 
 # LangChain
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.document_loaders import TextLoader, DirectoryLoader
+from langchain_community.document_loaders import TextLoader
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import OllamaEmbeddings
 from langchain_community.llms import Ollama
@@ -166,7 +166,6 @@ class LocalRAGPipeline:
             embedding=embeddings,
             persist_directory=str(self.persist_dir)
         )
-        self.vectorstore.persist()
         elapsed = time.time() - t0
         logger.info(f"Index built in {elapsed:.2f}s | {len(chunks)} chunks indexed")
 
@@ -226,7 +225,6 @@ class LocalRAGPipeline:
         doc = Document(page_content=content, metadata={"source": source})
         chunks = splitter.split_documents([doc])
         self.vectorstore.add_documents(chunks)
-        self.vectorstore.persist()
         logger.info(f"Added {len(chunks)} chunks from '{source}'")
         return len(chunks)
 

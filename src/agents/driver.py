@@ -31,8 +31,6 @@ from langgraph.prebuilt import ToolNode
 # LangChain
 from langchain_community.llms import Ollama
 from langchain.tools import tool
-from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
-from langchain_core.prompts import ChatPromptTemplate
 
 # ── Config ─────────────────────────────────────────────────────────────────
 LLM_MODEL = "gemma2:2b"
@@ -100,9 +98,12 @@ def python_syntax_checker(code: str) -> str:
 def text_summarizer_tool(text: str) -> str:
     """Extract key sentences from text as a simple extractive summary."""
     sentences = [s.strip() for s in text.replace("\n", " ").split(".") if len(s.strip()) > 30]
-    # Simple frequency-based selection: first, middle, last sentences
+    if not sentences:
+        # Input is too short to filter — return as-is
+        return text.strip()
     if len(sentences) <= 3:
         return ". ".join(sentences)
+    # Simple frequency-based selection: first, middle, last
     selected = [sentences[0], sentences[len(sentences)//2], sentences[-1]]
     return ". ".join(selected) + "."
 

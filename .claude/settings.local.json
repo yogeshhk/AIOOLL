@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"D:/Yogesh/GitHub/AIOOLL/.github/workflows\")",
+      "Bash(cp \"D:/Yogesh/GitHub/AIOOLL/.gtihub/workflows/ci.yml\" \"D:/Yogesh/GitHub/AIOOLL/.github/workflows/ci.yml\")",
+      "Bash(conda run *)",
+      "Bash(python -m pytest src/ml/tests/ -v --timeout=120 -m \"not slow\")",
+      "Bash(python *)"
+    ]
+  }
+}

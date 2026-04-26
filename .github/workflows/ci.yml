@@ -32,10 +32,6 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Download NLTK data
-        run: |
-          python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt'); nltk.download('wordnet')"
-
       - name: Run ML tests (no Ollama needed)
         run: |
           pytest src/ml/tests/ -v --timeout=120 -m "not ollama"
@@ -47,6 +43,10 @@ jobs:
       - name: Run agent tool tests (no Ollama needed)
         run: |
           pytest src/agents/tests/ -v --timeout=60 -m "not ollama"
+
+      - name: Run CV tests (synthetic images, no webcam)
+        run: |
+          pytest src/cv/tests/ -v --timeout=60
 
       - name: Lint
         run: |
@@ -65,7 +65,7 @@ jobs:
           echo "All driver files present ✓"
       - name: Check all UI files exist
         run: |
-          for module in ml dl rag agents llm_inference; do
+          for module in ml dl rag agents cv llm_inference; do
             test -f "src/$module/ui/app.py" || (echo "Missing src/$module/ui/app.py" && exit 1)
           done
           echo "All UI files present ✓"

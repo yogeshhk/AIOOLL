@@ -53,7 +53,7 @@ Share benchmark numbers from your hardware! We want to build a community benchma
 - [ ] Works on CPU-only (no CUDA calls)
 - [ ] Tests pass: `pytest src/`
 - [ ] Code linted: `flake8 src/` (max line length 100)
-- [ ] New dependencies added to `requirements.txt`
+- [ ] New dependencies added to `requirements.txt` and `environment.yml`
 - [ ] Module has a `driver.py`, `tests/`, and `ui/app.py`
 
 ## Getting Started
@@ -61,8 +61,9 @@ Share benchmark numbers from your hardware! We want to build a community benchma
 ```bash
 git clone https://github.com/yourusername/PrajnaAI.git
 cd PrajnaAI
+conda env create -f environment.yml
+conda activate aiooll
 bash scripts/setup.sh
-source venv/bin/activate
 
 # Run all tests
 pytest src/ -v --timeout=120

@@ -38,7 +38,7 @@ models:
 	bash scripts/pull_models.sh
 
 test:
-	$(PYTEST) src/ml/tests/ src/dl/tests/ src/agents/tests/ -v --timeout=120
+	$(PYTEST) src/ml/tests/ src/dl/tests/ src/agents/tests/ src/cv/tests/ -v --timeout=120
 
 test-ml:
 	$(PYTEST) src/ml/tests/ -v --timeout=120

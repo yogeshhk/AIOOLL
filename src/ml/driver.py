@@ -154,16 +154,18 @@ class SpamClassifier:
         return self.results
 
     def predict(self, text: str) -> dict:
-        """Predict single message."""
+        """Predict single message. confidence is always in [0, 1]."""
         if self.best_model is None:
             model_path = MODELS_DIR / "spam_classifier.pkl"
             self.best_model = joblib.load(model_path)
         pred = self.best_model.predict([text])[0]
         try:
-            score = self.best_model.decision_function([text])[0]
+            margin = self.best_model.decision_function([text])[0]
+            # Convert raw margin to probability via sigmoid so callers always get [0, 1]
+            confidence = 1.0 / (1.0 + np.exp(-margin))
         except AttributeError:
-            score = self.best_model.predict_proba([text])[0][1]
-        return {"prediction": "SPAM" if pred == 1 else "HAM", "confidence": float(score)}
+            confidence = self.best_model.predict_proba([text])[0][1]
+        return {"prediction": "SPAM" if pred == 1 else "HAM", "confidence": float(confidence)}
 
     def _plot_results(self):
         """Generate comparison plots."""

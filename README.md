@@ -62,20 +62,15 @@ AIOOLL/
 ```bash
 git clone https://github.com/yogeshhk/AIOOLL.git
 cd AIOOLL
-conda create -n aiooll python=3.10 -y
-source "$(conda info --base)/etc/profile.d/conda.sh"
+conda env create -f environment.yml
 conda activate aiooll
-pip install -r requirements.txt
 bash scripts/setup.sh
 ```
 
 ### 3. Install Ollama & Pull Models
 
 ```bash
-# Install Ollama
-bash scripts/pull models.sh
-
-# Else Pull quantized CPU-friendly models
+# Pull quantized CPU-friendly models
 ollama pull gemma2:2b
 ollama pull qwen2:1.5b
 ollama pull nomic-embed-text    # for RAG embeddings
